@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/proxmox-vm
+
+- name: Import download_image task
+  ansible.builtin.import_tasks: download_image.yml
+  tags:
+    - download_image

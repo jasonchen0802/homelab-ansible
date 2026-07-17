@@ -1,0 +1,8 @@
+---
+vm_hostname: vm-jarvis
+vm_id: 400
+
+provision_specs:
+  hardware:
+    cores: 2
+    memory: 8192

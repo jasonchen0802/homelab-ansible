@@ -4,7 +4,26 @@
 
 pve_node: pve
 
-# Image source
-image_url: 'https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2'
-checksum_algorithm: sha512
-checksum: 7ae53e9dbee282bfc16f289dec483dde3a8598769c38a267948310f7a2a52c662620198603bc52c142627efba379863d16079698a10b34102d55bcedd40e8d32
+# KVM hardware default specifications
+hardware_defaults:
+  cpu: host
+  cores: 2
+  memory: 4096
+  machine: q35
+  bios: ovmf
+
+# KVM storage default configurations
+storage_defaults:
+  efidisk:
+    pool: local-zfs
+    format: raw
+  cloudinit:
+    volume_id: 'local-zfs:cloudinit'
+  image:
+    disk: scsi0
+    format: raw
+    pool: service
+
+# KVM network default interface
+network_defaults:
+  bridge: vmbr0

@@ -6,3 +6,8 @@
   ansible.builtin.import_tasks: download_image.yml
   tags:
     - download_image
+
+- name: Import create_vm task
+  ansible.builtin.import_tasks: create_vm.yml
+  tags:
+    - create_vm

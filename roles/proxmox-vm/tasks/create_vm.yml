@@ -1,0 +1,80 @@
+---
+- name: Validate and load mandatory host variables
+  ansible.builtin.set_fact:
+    # Hardware variables
+    final_cores: >-
+      {{ provision_specs.hardware.cores | default(hardware_defaults.cores) }}
+    final_memory: >-
+      {{ provision_specs.hardware.memory | default(hardware_defaults.memory) }}
+
+    # Cloudinit variables
+    final_ip: >-
+      {{
+        provision_specs.cloudinit.ip | mandatory(
+          'Error: provision_specs.cloudinit.ip is undefined in host_vars'
+        )
+      }}
+    final_gw: >-
+      {{
+        provision_specs.cloudinit.gw | mandatory(
+          'Error: provision_specs.cloudinit.gw is undefined in host_vars'
+        )
+      }}
+    final_ci_user: >-
+      {{
+        provision_specs.cloudinit.user | mandatory(
+          'Error: provision_specs.cloudinit.user is undefined in host_vars'
+        )
+      }}
+    final_ci_sshkeys: >-
+      {{ provision_specs.cloudinit.sshkeys | ternary(provision_specs.cloudinit.sshkeys, '') }}
+
+- name: Create Proxmox KVM instance
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    name: "{{ vm_hostname }}"
+
+    # KVM base specifications
+    cpu: "{{ hardware_defaults.cpu }}"
+    cores: "{{ final_cores }}"
+    memory: "{{ final_memory }}"
+    ostype: "{{ current_image.ostype }}"
+    machine: "{{ hardware_defaults.machine }}"
+    bios: "{{ hardware_defaults.bios }}"
+    efidisk0:
+      storage: "{{ storage_defaults.efidisk.pool }}"
+      format: "{{ storage_defaults.efidisk.format }}"
+      efitype: 4m
+      pre_enrolled_keys: true
+    scsihw: virtio-scsi-single
+
+    # KVM network interface
+    net:
+      net0: "virtio,bridge={{ network_defaults.bridge }},firewall=1"
+    ipconfig:
+      ipconfig0: "ip={{ final_ip }},gw={{ final_gw }}"
+
+    # KVM cloudinit integration
+    ide:
+      ide2: "{{ storage_defaults.cloudinit.volume_id }}"
+    ciuser: "{{ final_ci_user }}"
+    sshkeys: "{{ final_ci_sshkeys }}"
+
+- name: Import specified OS cloud image
+  community.proxmox.proxmox_disk:
+    vmid: "{{ vm_id }}"
+    disk: "{{ storage_defaults.image.disk }}"
+    format: "{{ storage_defaults.image.format }}"
+    storage: "{{ storage_defaults.image.pool }}"
+    import_from: "{{ pve_template_src_path }}"
+    discard: true
+    iothread: true
+    state: present
+
+- name: Set imported OS disk as first boot order
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    boot: "order={{ storage_defaults.image.disk }}"
+    update: true

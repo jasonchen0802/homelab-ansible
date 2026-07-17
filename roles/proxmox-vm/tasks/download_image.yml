@@ -2,9 +2,9 @@
 - name: Download specified OS cloud image
   community.proxmox.proxmox_template:
     node: "{{ pve_node }}"
-    storage: local
-    content_type: import
-    url: "{{ image_url }}"
-    checksum_algorithm: "{{ checksum_algorithm }}"
-    checksum: "{{ checksum }}"
+    storage: "{{ current_image.pve_storage }}"
+    content_type: "{{ current_image.pve_content_type }}"
+    url: "{{ current_image.url }}"
+    checksum_algorithm: "{{ current_image.checksum_algorithm }}"
+    checksum: "{{ current_image.checksum }}"
     timeout: 1800

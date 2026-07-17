@@ -1,6 +1,6 @@
 ---
 - name: Test local Proxmox VM role
-  hosts: localhost
+  hosts: vm-jarvis
   gather_facts: false
 
   vars:
@@ -19,3 +19,8 @@
       ansible.builtin.include_role:
         name: proxmox-vm
         tasks_from: download_image
+
+    - name: Include Proxmox VM creation tasks
+      ansible.builtin.include_role:
+        name: proxmox-vm
+        tasks_from: create_vm

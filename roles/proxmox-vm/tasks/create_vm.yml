@@ -6,6 +6,12 @@
       {{ provision_specs.hardware.cores | default(hardware_defaults.cores) }}
     final_memory: >-
       {{ provision_specs.hardware.memory | default(hardware_defaults.memory) }}
+    final_disk_size: >-
+      {{
+        provision_specs.hardware.disk_size | mandatory(
+          'Error: provision_specs.hardware.disk_size is undefined in host_vars'
+        )
+      }}
 
     # Cloudinit variables
     final_ip: >-
@@ -71,6 +77,28 @@
     discard: true
     iothread: true
     state: present
+
+- name: "[BLOCK] ---------- RESIZE DISK STORAGE ----------"
+
+  vars:
+    disk_config_str: "{{ vm_info.proxmox_vms[0].config[storage_defaults.image.disk] }}"
+    current_disk_size_gb: "{{ disk_config_str | regex_search('size=(\\d+)[GgMm]', '\\1') | first | int }}"
+    disk_increment_gb: "{{ (final_disk_size | int) - current_disk_size_gb }}"
+
+  block:
+    - name: Gather info from the Proxmox VM to check disk status
+      community.proxmox.proxmox_vm_info:
+        node: "{{ pve_node }}"
+        vmid: "{{ vm_id }}"
+        config: current
+      register: vm_info
+
+    - name: Resize the imported OS disk to final size
+      community.proxmox.proxmox_disk:
+        vmid: "{{ vm_id }}"
+        disk: "{{ storage_defaults.image.disk }}"
+        size: "+{{ disk_increment_gb }}G"
+        state: resized
 
 - name: Set imported OS disk as first boot order
   community.proxmox.proxmox_kvm:

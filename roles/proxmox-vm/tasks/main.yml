@@ -21,3 +21,8 @@
   ansible.builtin.import_tasks: stop_vm.yml
   tags:
     - stop_vm
+
+- name: Import remove_vm task
+  ansible.builtin.import_tasks: remove_vm.yml
+  tags:
+    - remove_vm

@@ -1,0 +1,27 @@
+---
+- name: Safety check to prevent accidental VM deletion
+  ansible.builtin.fail:
+    msg: "Accidental deletion blocked: Please append '-e purge_confirmation=true' to execute VM removal."
+  when: purge_confirmation is not defined or not purge_confirmation
+
+- name: Force stop the VM before removal
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    state: stopped
+    timeout: 30
+  register: stop_result
+  failed_when:
+    - stop_result.failed
+
+- name: Purge Proxmox KVM instance completely
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    state: absent
+  when: purge_confirmation | bool
+
+- name: Remove old SSH host key from controller object
+  ansible.builtin.known_hosts:
+    name: "{{ final_ip.split('/') | first }}"
+    state: absent

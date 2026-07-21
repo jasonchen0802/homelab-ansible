@@ -11,3 +11,13 @@
   ansible.builtin.import_tasks: create_vm.yml
   tags:
     - create_vm
+
+- name: Import start_vm task
+  ansible.builtin.import_tasks: start_vm.yml
+  tags:
+    - start_vm
+
+- name: Import stop_vm task
+  ansible.builtin.import_tasks: stop_vm.yml
+  tags:
+    - stop_vm

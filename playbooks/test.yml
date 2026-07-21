@@ -24,3 +24,8 @@
       ansible.builtin.include_role:
         name: proxmox-vm
         tasks_from: create_vm
+
+    - name: Include Proxmox VM start up tasks
+      ansible.builtin.include_role:
+        name: proxmox-vm
+        tasks_from: start_vm

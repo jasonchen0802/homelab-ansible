@@ -1,0 +1,19 @@
+---
+- name: Send start command via Proxmox API
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    state: started
+
+- name: Wait for the VM to become reachable via SSH
+  ansible.builtin.wait_for:
+    host: "{{ final_ip.split('/') | first }}"
+    port: 22
+    state: started
+    delay: 30
+    sleep: 5
+    timeout: 180
+
+- name: Send successful message
+  ansible.builtin.debug:
+    msg: "{{ vm_hostname }} is reachable and ready to config!"

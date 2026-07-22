@@ -1,6 +1,7 @@
 ---
-- name: Test local Proxmox VM role
-  hosts: vm-jarvis
+- name: Provision Proxmox VMs
+  hosts: all:!localhost
+  connection: local
   gather_facts: false
 
   vars:
@@ -14,18 +15,5 @@
   module_defaults:
     group/community.proxmox.proxmox: *proxmox_api
 
-  tasks:
-    - name: Include Proxmox VM cloud image provisioning tasks
-      ansible.builtin.include_role:
-        name: proxmox-vm
-        tasks_from: download_image
-
-    - name: Include Proxmox VM creation tasks
-      ansible.builtin.include_role:
-        name: proxmox-vm
-        tasks_from: create_vm
-
-    - name: Include Proxmox VM start up tasks
-      ansible.builtin.include_role:
-        name: proxmox-vm
-        tasks_from: start_vm
+  roles:
+    - role: proxmox-vm

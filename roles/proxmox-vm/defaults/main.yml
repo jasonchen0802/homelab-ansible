@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for roles/proxmox-vm
+
+pve_node: pve
+
+# KVM hardware default specifications
+hardware_defaults:
+  cpu: host
+  cores: 2
+  memory: 4096
+  machine: q35
+  bios: ovmf
+
+# KVM storage default configurations
+storage_defaults:
+  efidisk:
+    pool: local-zfs
+    format: raw
+  cloudinit:
+    volume_id: 'local-zfs:cloudinit'
+  image:
+    disk: scsi0
+    format: raw
+    pool: service
+
+# KVM network default interface
+network_defaults:
+  bridge: vmbr0

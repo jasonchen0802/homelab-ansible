@@ -1,0 +1,19 @@
+---
+- name: Provision Proxmox VMs
+  hosts: all:!localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    proxmox_api: &proxmox_api
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_token_id: "{{ proxmox_api_token_id }}"
+      api_token_secret: "{{ proxmox_api_token_secret }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+
+  module_defaults:
+    group/community.proxmox.proxmox: *proxmox_api
+
+  roles:
+    - role: proxmox-vm

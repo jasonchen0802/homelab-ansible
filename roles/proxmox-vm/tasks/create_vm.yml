@@ -1,0 +1,72 @@
+---
+- name: Create Proxmox KVM instance
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    name: "{{ vm_hostname }}"
+
+    # KVM base specifications
+    cpu: "{{ hardware_defaults.cpu }}"
+    cores: "{{ final_cores }}"
+    memory: "{{ final_memory }}"
+    ostype: "{{ current_image.ostype }}"
+    machine: "{{ hardware_defaults.machine }}"
+    bios: "{{ hardware_defaults.bios }}"
+    efidisk0:
+      storage: "{{ storage_defaults.efidisk.pool }}"
+      format: "{{ storage_defaults.efidisk.format }}"
+      efitype: 4m
+      pre_enrolled_keys: true
+    scsihw: virtio-scsi-single
+
+    # KVM network interface
+    net:
+      net0: "virtio,bridge={{ network_defaults.bridge }},firewall=1"
+    ipconfig:
+      ipconfig0: "ip={{ final_ip }},gw={{ final_gw }}"
+
+    # KVM cloudinit integration
+    ide:
+      ide2: "{{ storage_defaults.cloudinit.volume_id }}"
+    ciuser: "{{ final_ci_user }}"
+    sshkeys: "{{ final_ci_sshkeys }}"
+
+- name: Import specified OS cloud image
+  community.proxmox.proxmox_disk:
+    vmid: "{{ vm_id }}"
+    disk: "{{ storage_defaults.image.disk }}"
+    format: "{{ storage_defaults.image.format }}"
+    storage: "{{ storage_defaults.image.pool }}"
+    import_from: "{{ pve_template_src_path }}"
+    discard: true
+    iothread: true
+    state: present
+
+- name: "[BLOCK] ---------- RESIZE DISK STORAGE ----------"
+
+  vars:
+    disk_config_str: "{{ vm_info.proxmox_vms[0].config[storage_defaults.image.disk] }}"
+    current_disk_size_gb: "{{ disk_config_str | regex_search('size=(\\d+)[GgMm]', '\\1') | first | int }}"
+    disk_increment_gb: "{{ (final_disk_size | int) - current_disk_size_gb }}"
+
+  block:
+    - name: Gather info from the Proxmox VM to check disk status
+      community.proxmox.proxmox_vm_info:
+        node: "{{ pve_node }}"
+        vmid: "{{ vm_id }}"
+        config: current
+      register: vm_info
+
+    - name: Resize the imported OS disk to final size
+      community.proxmox.proxmox_disk:
+        vmid: "{{ vm_id }}"
+        disk: "{{ storage_defaults.image.disk }}"
+        size: "+{{ disk_increment_gb }}G"
+        state: resized
+
+- name: Set imported OS disk as first boot order
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    boot: "order={{ storage_defaults.image.disk }}"
+    update: true

@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MIT-0
+---
+galaxy_info:
+  author: "Jason Chen"
+  description: "Ansible role to provision and manage Proxmox KVM virtual machines."
+  license: "MIT"
+  min_ansible_version: "2.2"
+  galaxy_tags:
+    - proxmox
+    - kvm
+dependencies: []

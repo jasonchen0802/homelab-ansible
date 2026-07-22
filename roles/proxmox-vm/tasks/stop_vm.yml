@@ -1,0 +1,7 @@
+---
+- name: Ensure Proxmox VM is stopped gracefully
+  community.proxmox.proxmox_kvm:
+    node: "{{ pve_node }}"
+    vmid: "{{ vm_id }}"
+    state: stopped
+    timeout: 60

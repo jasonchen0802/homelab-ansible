@@ -6,6 +6,7 @@ provision_specs:
   hardware:
     cores: 2
     memory: 8192
+    disk_size: 32
 
   cloudinit:
     user: jarvis

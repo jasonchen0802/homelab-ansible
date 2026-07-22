@@ -1,3 +1,7 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/common
+
+- name: Import update task
+  ansible.builtin.import_tasks: update.yml
+  tags: [common, update]

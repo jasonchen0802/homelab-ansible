@@ -12,6 +12,11 @@ hardware_defaults:
   machine: q35
   bios: ovmf
 
+# Proxmox default operations
+proxmox_vm_defaults:
+  agent: 1
+  fstrim_cloned_disks: 1
+
 # KVM storage default configurations
 storage_defaults:
   efidisk:
@@ -23,6 +28,7 @@ storage_defaults:
     disk: scsi0
     format: raw
     pool: service
+    ssd_emulation: true
 
 # KVM network default interface
 network_defaults:

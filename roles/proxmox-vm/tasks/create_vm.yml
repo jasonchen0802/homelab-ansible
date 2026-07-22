@@ -18,6 +18,7 @@
       efitype: 4m
       pre_enrolled_keys: true
     scsihw: virtio-scsi-single
+    agent: "enabled={{ proxmox_vm_defaults.agent }},fstrim_cloned_disks={{ proxmox_vm_defaults.fstrim_cloned_disks }}"
 
     # KVM network interface
     net:
@@ -40,6 +41,7 @@
     import_from: "{{ pve_template_src_path }}"
     discard: true
     iothread: true
+    ssd: "{{ storage_defaults.image.ssd_emulation }}"
     state: present
 
 - name: "[BLOCK] ---------- RESIZE DISK STORAGE ----------"

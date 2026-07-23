@@ -1,0 +1,28 @@
+---
+- name: "[BLOCK] ---------- Harden SSH Server Daemon Configuration ----------"
+  become: true
+  block:
+    - name: Comment out AcceptEnv environment variable forwarding
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^(AcceptEnv\s+LANG\s+LC_\*\s+COLORTERM\s+NO_COLOR)'
+        line: '#AcceptEnv LANG LC_* COLORTERM NO_COLOR'
+        backrefs: true
+        state: present
+      notify: Restart SSH Service
+
+    - name: Disable SSH password authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+      notify: Restart SSH Service
+
+    - name: Disable direct root login via password
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+        state: present
+      notify: Restart SSH Service

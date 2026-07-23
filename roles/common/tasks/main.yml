@@ -13,3 +13,7 @@
 - name: Import system task
   ansible.builtin.import_tasks: system.yml
   tags: [common, system]
+
+- name: Import security task
+  ansible.builtin.import_tasks: security.yml
+  tags: [common, security]

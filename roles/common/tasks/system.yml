@@ -1,0 +1,5 @@
+---
+- name: Set system timezone to Asia/Taipei
+  become: true
+  community.general.timezone:
+    name: Asia/Taipei

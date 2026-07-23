@@ -9,3 +9,7 @@
 - name: Import packages task
   ansible.builtin.import_tasks: packages.yml
   tags: [common, packages]
+
+- name: Import system task
+  ansible.builtin.import_tasks: system.yml
+  tags: [common, system]

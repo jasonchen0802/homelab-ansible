@@ -5,3 +5,7 @@
 - name: Import update task
   ansible.builtin.import_tasks: update.yml
   tags: [common, update]
+
+- name: Import packages task
+  ansible.builtin.import_tasks: packages.yml
+  tags: [common, packages]

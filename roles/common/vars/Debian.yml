@@ -1,0 +1,9 @@
+---
+common_essential_packages:
+  - git
+  - zsh
+  - neovim
+  - bat
+  - glow
+  # Essential for Proxmox dynamic metrics
+  - qemu-guest-agent

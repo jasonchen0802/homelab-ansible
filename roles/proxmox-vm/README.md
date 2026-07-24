@@ -1,7 +1,6 @@
 # Proxmox VM Lifecycle Management Role
 
 ## Features
------------
 
 - **Full Lifecycle Management**: Support create, start, stop, and remove operations via a single tag.
 
@@ -10,7 +9,6 @@
 - **Accidental Deletion Prevention**: Built-in safety valve to block unauthorized VM purge commands.
 
 ## Requirements
----------------
 
 - **Ansible Version**: `2.17+` (Tested on `2.21.1`)
 
@@ -32,7 +30,6 @@ pipx inject YOUR_ANSIBLE_VENV_NAME proxmoxer requests
 ```
 
 ## Role Variables
------------------
 
 ### Proxmox API Token
 | Variable | Type | Description | Example |
@@ -56,9 +53,11 @@ proxmox_validate_certs: false
 #### Proxmox API Token and user permission
 
 - Datastore.AllocateSpace
+- Datastore.AllocateTemplate
 - SDN.Use
 - VM.Allocate
 - VM.Audit
+- Sys.AccessNetwork
 - VM.Config.CPU
 - VM.Config.Cloudinit
 - VM.Config.Disk
@@ -114,7 +113,6 @@ provision_specs:
 ```
 
 ### VM Group
-------------
 
 - Storage Defaults (`storage_defaults.*`)
 
@@ -141,12 +139,10 @@ storage_defaults:
 ```
 
 ## Dependencies
----------------
 
 This role has no external role dependencies. It runs completely via `connection: local` using Proxmox API Tokens.
 
 ## Example Playbook
--------------------
 
 ```yaml
 ---
@@ -171,7 +167,6 @@ This role has no external role dependencies. It runs completely via `connection:
 ```
 
 ## Maintenance CLI Commands
----------------------------
 
 ```bash
 # Create VMs defined in inventory/hosts.yml and inventory/host_vars/vm_name.yml

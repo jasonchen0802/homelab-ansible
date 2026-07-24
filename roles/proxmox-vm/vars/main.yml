@@ -6,13 +6,15 @@ debian_target_release: trixie
 
 debian_releases:
   trixie:
-    url: 'https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2'
+    base_url: 'https://cloud.debian.org/images/cloud/trixie/latest'
+    target_file: 'debian-13-genericcloud-amd64.qcow2'
     checksum_algorithm: sha512
-    checksum: 7ae53e9dbee282bfc16f289dec483dde3a8598769c38a267948310f7a2a52c662620198603bc52c142627efba379863d16079698a10b34102d55bcedd40e8d32
+    checksum_url: "{{ debian_releases.trixie.base_url ~ '/SHA512SUMS' }}"
+    regex: "^([a-fA-F0-9]{128})\\s+{{ debian_releases.trixie.target_file }}$"
     ostype: l26
     pve_storage: local
     pve_content_type: import
 
 current_image: "{{ debian_releases[debian_target_release] }}"
 
-pve_template_src_path: "{{ current_image.pve_storage }}:{{ current_image.pve_content_type }}/{{ current_image.url | basename }}"
+pve_template_src_path: "{{ current_image.pve_storage }}:{{ current_image.pve_content_type }}/{{ current_image.target_file }}"

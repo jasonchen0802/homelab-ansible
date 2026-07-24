@@ -1,10 +1,22 @@
 ---
+- name: "[BLOCK] ---------- Remote Checksum Retrieval And Verification ----------"
+  block:
+    - name: Fetch remote checksum file
+      ansible.builtin.uri:
+        url: "{{ current_image.checksum_url }}"
+        return_content: true
+      register: remote_checksum
+
+    - name: "Get checksum for {{ current_image.target_file }}"
+      ansible.builtin.set_fact:
+        final_checksum: "{{ remote_checksum.content | regex_search(current_image.regex, '\\1', multiline=true) | first }}"
+
 - name: Download specified OS cloud image
   community.proxmox.proxmox_template:
     node: "{{ pve_node }}"
     storage: "{{ current_image.pve_storage }}"
     content_type: "{{ current_image.pve_content_type }}"
-    url: "{{ current_image.url }}"
+    url: "{{ current_image.base_url }}/{{ current_image.target_file }}"
     checksum_algorithm: "{{ current_image.checksum_algorithm }}"
-    checksum: "{{ current_image.checksum }}"
+    checksum: "{{ final_checksum }}"
     timeout: 1800

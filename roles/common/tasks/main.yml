@@ -17,3 +17,7 @@
 - name: Import security task
   ansible.builtin.import_tasks: security.yml
   tags: [common, security]
+
+- name: Import cleanup task
+  ansible.builtin.import_tasks: cleanup.yml
+  tags: [common, cleanup]

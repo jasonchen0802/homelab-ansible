@@ -1,3 +1,6 @@
 ---
 - name: "Orchestration Phase 1 - Provision Proxmox KVM Infrastructure"
   import_playbook: playbooks/infrastructure.yml
+
+- name: "Orchestration Phase 2 - OS optimization and personalization"
+  import_playbook: playbooks/configuration.yml

@@ -1,0 +1,9 @@
+---
+- name: Initialize linux VMs
+  hosts: all:!localhost
+  vars:
+    ansible_connection: ssh
+    ansible_python_interpreter: /usr/bin/python3
+  gather_facts: true
+  roles:
+    - role: common

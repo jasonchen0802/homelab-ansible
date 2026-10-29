@@ -1,7 +1,0 @@
----
-common_essential_packages:
-  - git
-  - zsh
-  - neovim
-  - bat
-  - glow

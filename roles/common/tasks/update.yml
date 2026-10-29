@@ -19,14 +19,3 @@
         upgrade: dist
         autoremove: true
         cache_valid_time: 3600
-
-# =======================================
-# macOS (Darwin) System Homebrew Upgrade
-# =======================================
-- name: "[BLOCK] ---------- Perform macOS Homebrew upgrade ----------"
-  when: ansible_facts['os_family'] == "Darwin"
-  block:
-    - name: Update Homebrew and upgrade all installed formulas
-      community.general.homebrew:
-        update_homebrew: true
-        upgrade_all: true
